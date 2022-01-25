@@ -1,0 +1,12 @@
+{
+  "name": "rome-playground",
+  "version": "0.1.0",
+  "files": [
+    "rome_playground_bg.wasm",
+    "rome_playground.js",
+    "rome_playground.d.ts"
+  ],
+  "module": "rome_playground.js",
+  "types": "rome_playground.d.ts",
+  "sideEffects": false
+}
