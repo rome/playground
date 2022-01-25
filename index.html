@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Rome Playground</title>
+    <style>
+        html {
+            font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        }
+
+        body {
+            background-color: #f0f9ff;
+        }
+
+        .title {
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .code-input {
+            font-family: monospace;
+            font-size: 1.2em;
+            min-width: 500px;
+            border-radius: 10px;
+            padding: 10px;
+            height: 400px;
+        }
+        .code-output {
+            font-size: 1.2em;
+            margin: 0 0 0 20px;
+            min-width: 500px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid black;
+            height: 400px;
+        }
+        .input-area {
+            display: inline-flex;
+            flex-direction: column;
+        }
+        .format-btn {
+            margin-top: 20px;
+            width: 100px;
+            height: 40px;
+            border-radius: 8px;
+            border: none;
+            background-color: #06b6d4;
+            color: white;
+            font-size: 15px;
+        }
+
+        .info-block {
+            padding: 20px;
+            background-color: #bae6fd;
+            width: 120px;
+            margin: 20px 0 20px 0;
+            border-radius: 10px;
+            border: 2px solid #0ea5e9;
+            color: #1e293b;
+        }
+    </style>
+</head>
+<body>
+<h1 class="title"> Rome Playground </h1>
+<div class="info-block">
+    Pls no unicode
+</div>
+<div class="main-content">
+<div class="input-area">
+    <textarea cols="60" rows="20" class="code-input"></textarea>
+    <button class="format-btn">FORMAT</button>
+</div>
+    <pre class="code-output"></pre>
+</div>
+<script type="module">
+    import init, { format } from "./pkg/rome_playground.js";
+    init()
+        .then(() => {
+            const codeInput = document.querySelector(".code-input");
+            const codeOutput = document.querySelector(".code-output");
+            const formatButton = document.querySelector(".format-btn");
+
+            if (window.location.hash !== '#') {
+                codeInput.value = atob(window.location.hash.substring(1));
+                codeOutput.innerHTML = format(codeInput.value);
+            }
+
+            formatButton.addEventListener('click', () => {
+                codeOutput.innerHTML = format(codeInput.value);
+            });
+
+            codeInput.addEventListener('input', () => {
+                const encodedCode = btoa(codeInput.value);
+                window.location.hash = encodedCode;
+            });
+        });
+</script>
+</body>
+</html>
