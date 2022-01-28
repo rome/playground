@@ -86,8 +86,8 @@
 </div>
 <script type="module">
     import init, { format } from "./pkg/rome_playground.js";
-    import prettier from "./node_modules/prettier/esm/standalone.mjs";
-    import parserBabel from "./node_modules/prettier/esm/parser-babel.mjs"
+    import prettier from "https://unpkg.com/prettier@2.5.1/esm/standalone.mjs";
+    import parserBabel from "https://unpkg.com/prettier@2.5.1/esm/parser-babel.mjs";
 
     function debounce(func, timeout = 100){
         let timer;
