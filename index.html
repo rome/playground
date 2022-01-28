@@ -26,17 +26,24 @@
             min-width: 500px;
             border-radius: 10px;
             padding: 10px;
-            height: 400px;
+            height: 200px;
+            margin: 20px;
         }
-        .code-output {
+        .output-container {
+            display: flex;
+            flex-direction: column;
+        }
+        .output {
             font-size: 1.2em;
-            margin: 0 0 0 20px;
+            margin: 20px;
             min-width: 500px;
+            max-width: 40vw;
+            overflow-y: scroll;
             background-color: white;
             border-radius: 10px;
             padding: 10px;
             border: 1px solid black;
-            height: 400px;
+            height: 200px;
         }
         .input-area {
             display: inline-flex;
@@ -60,13 +67,28 @@
     Pls no unicode
 </div>
 <div class="main-content">
-<div class="input-area">
-    <textarea cols="60" rows="20" class="code-input"></textarea>
-</div>
-    <pre class="code-output"></pre>
+    <div>
+        <h2> Input </h2>
+    <div class="input-area">
+        <textarea cols="60" rows="20" class="code-input"></textarea>
+    </div>
+    </div>
+    <div>
+        <div class="output-container">
+            <h2>Rome</h2>
+            <pre class="output rome-output"></pre>
+        </div>
+        <div class="output-container">
+            <h2>Prettier</h2>
+            <pre class="output prettier-output"></pre>
+        </div>
+    </div>
 </div>
 <script type="module">
     import init, { format } from "./pkg/rome_playground.js";
+    import prettier from "./node_modules/prettier/esm/standalone.mjs";
+    import parserBabel from "./node_modules/prettier/esm/parser-babel.mjs"
+
     function debounce(func, timeout = 100){
         let timer;
         return (...args) => {
@@ -84,15 +106,18 @@
     init()
         .then(() => {
             const codeInput = document.querySelector(".code-input");
-            const codeOutput = document.querySelector(".code-output");
+            const romeOutput = document.querySelector(".rome-output");
+            const prettierOutput = document.querySelector(".prettier-output");
 
             const debouncedFormat = debounce(() => {
-                codeOutput.innerHTML = format(codeInput.value);
+                romeOutput.innerHTML = format(codeInput.value);
+                prettierOutput.innerHTML = prettier.format(codeInput.value, { parser: "babel", plugins: [parserBabel] });
             });
 
             if (window.location.hash !== '#') {
                 codeInput.value = atob(window.location.hash.substring(1));
-                codeOutput.innerHTML = format(codeInput.value);
+                romeOutput.innerHTML = format(codeInput.value);
+                prettierOutput.innerHTML = prettier.format(codeInput.value, { parser: "babel", plugins: [parserBabel] });
             }
 
             codeInput.addEventListener('input', () => {
