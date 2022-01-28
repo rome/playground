@@ -111,13 +111,13 @@
 
             const debouncedFormat = debounce(() => {
                 romeOutput.innerHTML = format(codeInput.value);
-                prettierOutput.innerHTML = prettier.format(codeInput.value, { parser: "babel", plugins: [parserBabel] });
+                prettierOutput.innerHTML = prettier.format(codeInput.value, { useTabs: true, parser: "babel", plugins: [parserBabel] });
             });
 
             if (window.location.hash !== '#') {
                 codeInput.value = atob(window.location.hash.substring(1));
                 romeOutput.innerHTML = format(codeInput.value);
-                prettierOutput.innerHTML = prettier.format(codeInput.value, { parser: "babel", plugins: [parserBabel] });
+                prettierOutput.innerHTML = prettier.format(codeInput.value, { useTabs: true, parser: "babel", plugins: [parserBabel] });
             }
 
             codeInput.addEventListener('input', () => {
