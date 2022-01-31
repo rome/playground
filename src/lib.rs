@@ -1,4 +1,4 @@
-use rome_formatter::{FormatOptions, Formatter, IndentStyle};
+use rome_formatter::{format as format_code, FormatOptions, IndentStyle};
 use rslint_parser::parse_script;
 use wasm_bindgen::prelude::*;
 
@@ -11,11 +11,10 @@ pub fn format(code: &str) -> String {
         line_width: 80,
     };
 
-    Formatter::new(options)
-        .format_root(&tree)
+    format_code(options, &tree)
         // TODO: impl Error for FormatError
         .unwrap()
-        .code()
+        .as_code()
         .to_string()
 }
 
