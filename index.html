@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Rome Playground</title>
+    <link rel="stylesheet" href="https://unpkg.com/codemirror@5.65.1/lib/codemirror.css">
     <style>
         html {
             font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
@@ -18,32 +19,21 @@
 
         .main-content {
             display: flex;
-            flex-wrap: wrap;
         }
-        .code-input {
-            font-family: monospace;
-            font-size: 1.2em;
-            min-width: 500px;
-            border-radius: 10px;
-            padding: 10px;
-            height: 200px;
-            margin: 20px;
-        }
+
         .output-container {
             display: flex;
             flex-direction: column;
         }
         .output {
             font-size: 1.2em;
-            margin: 20px;
-            min-width: 500px;
-            max-width: 40vw;
+            width: 45vw;
             overflow-y: scroll;
             background-color: white;
             border-radius: 10px;
-            padding: 10px;
+            padding: 0 10px 0 10px;
+            box-sizing: content-box;
             border: 1px solid black;
-            height: 200px;
         }
         .input-area {
             display: inline-flex;
@@ -59,6 +49,10 @@
             border: 2px solid #0ea5e9;
             color: #1e293b;
         }
+
+        .editor {
+            width: 49vw;
+        }
     </style>
 </head>
 <body>
@@ -66,28 +60,37 @@
 <div class="info-block">
     Pls no unicode
 </div>
+<div style="display: none">
+    <button class="formatter-button">Formatter</button>
+    <button class="parser-button">Parser</button>
+</div>
 <div class="main-content">
     <div>
         <h2> Input </h2>
-    <div class="input-area">
-        <textarea cols="60" rows="20" class="code-input"></textarea>
-    </div>
+        <div class="editor input-area"></div>
     </div>
     <div>
-        <div class="output-container">
-            <h2>Rome</h2>
-            <pre class="output rome-output"></pre>
+        <div class="formatter-output-container output-container">
+            <h2>Rome Formatter</h2>
+            <div class="editor rome-formatter-output"></div>
         </div>
-        <div class="output-container">
+        <div class="formatter-output-container output-container">
             <h2>Prettier</h2>
-            <pre class="output prettier-output"></pre>
+            <div class="editor prettier-output"></div>
+        </div>
+        <div class="parser-output-container output-container">
+            <h2>Parser</h2>
+            <pre class="output parser-output"></pre>
         </div>
     </div>
 </div>
+
+
 <script type="module">
-    import init, { format } from "./pkg/rome_playground.js";
+    import init, { format, get_tree } from "./pkg/rome_playground.js";
     import prettier from "https://unpkg.com/prettier@2.5.1/esm/standalone.mjs";
     import parserBabel from "https://unpkg.com/prettier@2.5.1/esm/parser-babel.mjs";
+    import CodeMirror from "https://unpkg.com/codemirror@5.65.1/src/codemirror.js";
 
     function debounce(func, timeout = 100){
         let timer;
@@ -102,28 +105,42 @@
         };
     }
 
+    document.querySelector('.parser-output-container').style.display = 'none';
+
+    function addButtonListener(buttonClass, containerToShowClass, containerToHideClass) {
+        const button = document.querySelector(buttonClass)
+        button.addEventListener('click', () => {
+            console.log("CLICKING " + buttonClass);
+            document.querySelectorAll(containerToShowClass).forEach(c => {
+                c.style.display = '';
+            });
+            document.querySelectorAll(containerToHideClass).forEach(c => {
+                c.style.display = 'none';
+            });
+        })
+    }
+
+    const debouncedFormat = debounce((romeOutput, prettierOutput, parserOutput, editor) => {
+        romeOutput.setValue(format(editor.getValue()));
+        prettierOutput.setValue(prettier.format(editor.getValue(), { useTabs: true, parser: "babel", plugins: [parserBabel] }));
+        parserOutput.setValue(get_tree(editor.getValue()));
+    });
+
+    addButtonListener('.formatter-button', '.formatter-output-container', '.parser-output-container');
+    addButtonListener('.parser-button', '.parser-output-container', '.formatter-output-container');
 
     init()
         .then(() => {
-            const codeInput = document.querySelector(".code-input");
-            const romeOutput = document.querySelector(".rome-output");
-            const prettierOutput = document.querySelector(".prettier-output");
+            const code = window.location.hash !== '#' ? atob(window.location.hash.substring(1)) : "";
+            const editor = CodeMirror(document.querySelector(".input-area"), { mode: "javascript", value: code, lineNumbers: true })
+            const romeOutput = CodeMirror(document.querySelector(".rome-formatter-output"), { readOnly: true, value: format(code), lineNumbers: true });
+            const prettierCode = prettier.format(code, { useTabs: true, parser: "babel", plugins: [parserBabel] });
+            const prettierOutput = CodeMirror(document.querySelector(".prettier-output"), { readOnly: true, value: prettierCode, lineNumbers: true});
+            const parserOutput = CodeMirror(document.querySelector(".parser-output"), { readOnly: true, value: get_tree(code), lineNumbers: true });
 
-            const debouncedFormat = debounce(() => {
-                romeOutput.innerHTML = format(codeInput.value);
-                prettierOutput.innerHTML = prettier.format(codeInput.value, { useTabs: true, parser: "babel", plugins: [parserBabel] });
-            });
-
-            if (window.location.hash !== '#') {
-                codeInput.value = atob(window.location.hash.substring(1));
-                romeOutput.innerHTML = format(codeInput.value);
-                prettierOutput.innerHTML = prettier.format(codeInput.value, { useTabs: true, parser: "babel", plugins: [parserBabel] });
-            }
-
-            codeInput.addEventListener('input', () => {
-                debouncedFormat();
-                const encodedCode = btoa(codeInput.value);
-                window.location.hash = encodedCode;
+            editor.on('change', (editor) => {
+                debouncedFormat(romeOutput, prettierOutput, parserOutput, editor);
+                window.location.hash = btoa(editor.getValue());
             });
         });
 </script>

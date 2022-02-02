@@ -3,6 +3,13 @@ use rslint_parser::{parse_module};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
+pub fn get_tree(code: &str) -> String {
+    let tree = parse_module(code, 0).syntax();
+
+    format!("{:#?}", tree)
+}
+
+#[wasm_bindgen]
 pub fn format(code: &str) -> String {
     let tree = parse_module(code, 0).syntax();
 
