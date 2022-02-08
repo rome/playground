@@ -1,7 +1,7 @@
 # Playground
 
-A simple playground for Rome. Right now just to test
-the formatter, but we could use this as a potential dogfood for Rome
+A simple playground for Rome. Right now we use Vite, which is a 
+tad ironic, but in the future we can use this as a dogfood for Rome.
 
 ## Installation
 
@@ -14,10 +14,4 @@ To build run:
 wasm-pack build --target web
 ```
 
-Then open `index.html` in your browser.
-
-If you have python3 installed you can run:
-```
-python3 -m http.server
-```
-and go to http://localhost:8000.
+Then, if you want to run in development: `npm run dev`
