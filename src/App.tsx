@@ -3,7 +3,8 @@ import CodeEditor from "@uiw/react-textarea-code-editor";
 import "react-tabs/style/react-tabs.css";
 import init, {
   format as formatWithRome,
-  get_tree as getTree,
+  get_ast as getAst,
+  get_cst as getCst,
 } from "../pkg/rome_playground";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import { useEffect, useState } from "react";
@@ -52,9 +53,11 @@ function App() {
     case LoadingState.Loading:
       return <div>Loading...</div>;
     default:
+      const ast = getAst(code);
+      const cst = getCst(code);
       return (
         <div className="flex bg-slate-100">
-          <div className="w-1/2 divide-x-2 divide-slate-200">
+          <div className="w-1/2 p-5 divide-x-2 divide-slate-200">
             <CodeEditor
               value={code}
               language="js"
@@ -71,11 +74,12 @@ function App() {
               }}
             />
           </div>
-          <div className="w-1/2 flex flex-col">
+          <div className="w-1/2 p-5 flex flex-col">
             <Tabs>
               <TabList>
-                <Tab>Formatter</Tab>
-                <Tab>Parser</Tab>
+                <Tab selectedClassName="bg-slate-300">Formatter</Tab>
+                <Tab selectedClassName="bg-slate-300">CST</Tab>
+                <Tab selectedClassName="bg-slate-300">AST</Tab>
               </TabList>
               <TabPanel>
                 <h1>Rome</h1>
@@ -104,9 +108,10 @@ function App() {
                 />
               </TabPanel>
               <TabPanel>
-                <pre className="h-screen overflow-y-scroll">
-                  {getTree(code)}
-                </pre>
+                <pre className="h-screen overflow-y-scroll">{cst}</pre>
+              </TabPanel>
+              <TabPanel>
+                <pre className="h-screen overflow-y-scroll">{ast}</pre>
               </TabPanel>
             </Tabs>
           </div>

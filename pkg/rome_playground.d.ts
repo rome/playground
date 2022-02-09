@@ -4,7 +4,12 @@
 * @param {string} code
 * @returns {string}
 */
-export function get_tree(code: string): string;
+export function get_ast(code: string): string;
+/**
+* @param {string} code
+* @returns {string}
+*/
+export function get_cst(code: string): string;
 /**
 * @param {string} code
 * @returns {string}
@@ -15,7 +20,8 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly get_tree: (a: number, b: number, c: number) => void;
+  readonly get_ast: (a: number, b: number, c: number) => void;
+  readonly get_cst: (a: number, b: number, c: number) => void;
   readonly format: (a: number, b: number, c: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_malloc: (a: number) => number;

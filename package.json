@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "@types/prettier": "^2.4.3",
-    "@uiw/react-codemirror": "^4.3.3",
     "@uiw/react-textarea-code-editor": "^1.4.16",
     "prettier": "^2.5.1",
     "react": "^17.0.2",
