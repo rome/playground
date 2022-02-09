@@ -1,7 +1,7 @@
 import "./App.css";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 import "react-tabs/style/react-tabs.css";
-import init, { format as formatWithRome, run } from "../pkg/rome_playground";
+import init, { run } from "../pkg/rome_playground";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import { useEffect, useState } from "react";
 import prettier from "prettier";
@@ -46,7 +46,11 @@ function App() {
     case LoadingState.Error:
       return <div>Error loading. Please refresh</div>;
     case LoadingState.Loading:
-      return <div>Loading...</div>;
+      return (
+        <div className="h-screen w-screen flex align-center justify-center">
+          Loading...
+        </div>
+      );
     default:
       const { cst, ast, formatted_code, errors } = run(code);
       return (
