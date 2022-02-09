@@ -2,31 +2,45 @@
 /* eslint-disable */
 /**
 * @param {string} code
-* @returns {string}
+* @returns {PlaygroundResult}
 */
-export function get_ast(code: string): string;
+export function run(code: string): PlaygroundResult;
 /**
-* @param {string} code
-* @returns {string}
 */
-export function get_cst(code: string): string;
+export class PlaygroundResult {
+  free(): void;
 /**
-* @param {string} code
 * @returns {string}
 */
-export function format(code: string): string;
+  readonly ast: string;
+/**
+* @returns {string}
+*/
+  readonly cst: string;
+/**
+* @returns {string}
+*/
+  readonly errors: string;
+/**
+* @returns {string}
+*/
+  readonly formatted_code: string;
+}
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly get_ast: (a: number, b: number, c: number) => void;
-  readonly get_cst: (a: number, b: number, c: number) => void;
-  readonly format: (a: number, b: number, c: number) => void;
+  readonly __wbg_playgroundresult_free: (a: number) => void;
+  readonly playgroundresult_ast: (a: number, b: number) => void;
+  readonly playgroundresult_cst: (a: number, b: number) => void;
+  readonly playgroundresult_formatted_code: (a: number, b: number) => void;
+  readonly playgroundresult_errors: (a: number, b: number) => void;
+  readonly run: (a: number, b: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
+  readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
-  readonly __wbindgen_free: (a: number, b: number) => void;
 }
 
 /**
