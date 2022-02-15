@@ -64,14 +64,21 @@ impl WriteColor for ErrorOutput {
 }
 
 #[wasm_bindgen]
-pub fn run(code: String, line_width: u16) -> PlaygroundResult {
+pub fn run(code: String, line_width: u16, is_tab: bool) -> PlaygroundResult {
     let mut simple_files = SimpleFiles::new();
     let main_file_id = simple_files.add("main.js".to_string(), code.clone());
 
     let parse = parse_module(&code, main_file_id);
     let syntax = parse.syntax();
+
+    let indent_style = if is_tab {
+        IndentStyle::Tab
+    } else {
+        IndentStyle::Space(2)
+    };
+
     let options = FormatOptions {
-        indent_style: IndentStyle::Tab,
+        indent_style,
         line_width,
     };
 

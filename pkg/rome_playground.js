@@ -82,12 +82,13 @@ function passStringToWasm0(arg, malloc, realloc) {
 /**
 * @param {string} code
 * @param {number} line_width
+* @param {boolean} is_tab
 * @returns {PlaygroundResult}
 */
-export function run(code, line_width) {
+export function run(code, line_width, is_tab) {
     var ptr0 = passStringToWasm0(code, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     var len0 = WASM_VECTOR_LEN;
-    var ret = wasm.run(ptr0, len0, line_width);
+    var ret = wasm.run(ptr0, len0, line_width, is_tab);
     return PlaygroundResult.__wrap(ret);
 }
 

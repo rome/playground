@@ -7,6 +7,9 @@ import { useEffect, useState } from "react";
 import prettier from "prettier";
 // @ts-ignore
 import parserBabel from "prettier/esm/parser-babel";
+import IndentStyleSelect from "./IndentStyleSelect";
+import LineWidthInput from "./LineWidthInput";
+import { IndentStyle } from "./types";
 
 enum LoadingState {
   Loading,
@@ -14,11 +17,14 @@ enum LoadingState {
   Error,
 }
 
-function formatWithPrettier(code: string, lineWidth: number) {
+function formatWithPrettier(
+  code: string,
+  options: { lineWidth: number; indentType: IndentStyle }
+) {
   try {
     return prettier.format(code, {
-      useTabs: true,
-      printWidth: lineWidth,
+      useTabs: options.indentType === IndentStyle.Tab,
+      printWidth: options.lineWidth,
       parser: "babel",
       plugins: [parserBabel],
     });
@@ -43,6 +49,7 @@ function App() {
     window.location.hash !== "#" ? atob(window.location.hash.substring(1)) : ""
   );
   const [lineWidth, setLineWidth] = useState(80);
+  const [indentType, setIndentType] = useState(IndentStyle.Tab);
 
   switch (loadingState) {
     case LoadingState.Error:
@@ -54,37 +61,20 @@ function App() {
         </div>
       );
     default:
-      const { cst, ast, formatted_code, errors } = run(code, lineWidth);
+      const { cst, ast, formatted_code, errors } = run(
+        code,
+        lineWidth,
+        indentType === IndentStyle.Tab
+      );
       return (
         <div className="divide-y divide-slate-300">
           <h1 className="p-4 text-xl">Rome Playground</h1>
           <div>
-            <label className="p-5">
-              Line Width
-              <input
-                className="p-1 m-2"
-                style={{ width: "60px" }}
-                type="number"
-                value={lineWidth}
-                onChange={(e) => {
-                  setLineWidth(parseInt(e.target.value));
-                }}
-              />
-            </label>
-            <button
-              onClick={() => setLineWidth(80)}
-              disabled={lineWidth === 80}
-              className="bg-slate-500 m-2 text-sm w-[80px] p-1 rounded text-slate-50 disabled:bg-slate-300 transition"
-            >
-              80
-            </button>
-            <button
-              onClick={() => setLineWidth(120)}
-              disabled={lineWidth === 120}
-              className="bg-slate-500 m-2 text-sm w-[80px] p-1 rounded text-slate-50 disabled:bg-slate-300 transition"
-            >
-              120
-            </button>
+            <LineWidthInput lineWidth={lineWidth} setLineWidth={setLineWidth} />
+            <IndentStyleSelect
+              indentType={indentType}
+              setIndentType={setIndentType}
+            />
           </div>
           <div className="box-border flex h-screen divide-x divide-slate-300">
             <div className="w-1/2 p-5">
@@ -132,7 +122,7 @@ function App() {
                   />
                   <h1>Prettier</h1>
                   <CodeEditor
-                    value={formatWithPrettier(code, lineWidth)}
+                    value={formatWithPrettier(code, { lineWidth, indentType })}
                     language="js"
                     placeholder="Prettier Output"
                     style={{
