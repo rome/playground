@@ -64,7 +64,7 @@ impl WriteColor for ErrorOutput {
 }
 
 #[wasm_bindgen]
-pub fn run(code: String) -> PlaygroundResult {
+pub fn run(code: String, line_width: u16) -> PlaygroundResult {
     let mut simple_files = SimpleFiles::new();
     let main_file_id = simple_files.add("main.js".to_string(), code.clone());
 
@@ -72,7 +72,7 @@ pub fn run(code: String) -> PlaygroundResult {
     let syntax = parse.syntax();
     let options = FormatOptions {
         indent_style: IndentStyle::Tab,
-        line_width: 80,
+        line_width,
     };
 
     let cst = format!("{:#?}", syntax);

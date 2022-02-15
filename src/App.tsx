@@ -14,10 +14,11 @@ enum LoadingState {
   Error,
 }
 
-function formatWithPrettier(code: string) {
+function formatWithPrettier(code: string, lineWidth: number) {
   try {
     return prettier.format(code, {
       useTabs: true,
+      printWidth: lineWidth,
       parser: "babel",
       plugins: [parserBabel],
     });
@@ -41,6 +42,7 @@ function App() {
   const [code, setCode] = useState(
     window.location.hash !== "#" ? atob(window.location.hash.substring(1)) : ""
   );
+  const [lineWidth, setLineWidth] = useState(80);
 
   switch (loadingState) {
     case LoadingState.Error:
@@ -52,10 +54,38 @@ function App() {
         </div>
       );
     default:
-      const { cst, ast, formatted_code, errors } = run(code);
+      const { cst, ast, formatted_code, errors } = run(code, lineWidth);
       return (
         <div className="divide-y divide-slate-300">
           <h1 className="p-4 text-xl">Rome Playground</h1>
+          <div>
+            <label className="p-5">
+              Line Width
+              <input
+                className="p-1 m-2"
+                style={{ width: "60px" }}
+                type="number"
+                value={lineWidth}
+                onChange={(e) => {
+                  setLineWidth(parseInt(e.target.value));
+                }}
+              />
+            </label>
+            <button
+              onClick={() => setLineWidth(80)}
+              disabled={lineWidth === 80}
+              className="bg-slate-500 m-2 text-sm w-[80px] p-1 rounded text-slate-50 disabled:bg-slate-300 transition"
+            >
+              80
+            </button>
+            <button
+              onClick={() => setLineWidth(120)}
+              disabled={lineWidth === 120}
+              className="bg-slate-500 m-2 text-sm w-[80px] p-1 rounded text-slate-50 disabled:bg-slate-300 transition"
+            >
+              120
+            </button>
+          </div>
           <div className="box-border flex h-screen divide-x divide-slate-300">
             <div className="w-1/2 p-5">
               <CodeEditor
@@ -102,7 +132,7 @@ function App() {
                   />
                   <h1>Prettier</h1>
                   <CodeEditor
-                    value={formatWithPrettier(code)}
+                    value={formatWithPrettier(code, lineWidth)}
                     language="js"
                     placeholder="Prettier Output"
                     style={{
