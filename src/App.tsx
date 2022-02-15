@@ -116,6 +116,7 @@ function App() {
                     style={{
                       fontSize: 12,
                       height: "40vh",
+                      overflowY: "scroll",
                       fontFamily:
                         "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
                     }}
@@ -128,6 +129,7 @@ function App() {
                     style={{
                       fontSize: 12,
                       height: "50vh",
+                      overflowY: "scroll",
                       fontFamily:
                         "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
                     }}
