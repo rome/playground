@@ -19,11 +19,12 @@ enum LoadingState {
 
 function formatWithPrettier(
   code: string,
-  options: { lineWidth: number; indentType: IndentStyle }
+  options: { lineWidth: number; indentStyle: IndentStyle; indentWidth: number }
 ) {
   try {
     return prettier.format(code, {
-      useTabs: options.indentType === IndentStyle.Tab,
+      useTabs: options.indentStyle === IndentStyle.Tab,
+      tabWidth: options.indentWidth,
       printWidth: options.lineWidth,
       parser: "babel",
       plugins: [parserBabel],
@@ -44,12 +45,29 @@ function App() {
       });
   }, []);
 
+  const searchParams = new URLSearchParams(window.location.search);
   const [loadingState, setLoadingState] = useState(LoadingState.Loading);
   const [code, setCode] = useState(
     window.location.hash !== "#" ? atob(window.location.hash.substring(1)) : ""
   );
-  const [lineWidth, setLineWidth] = useState(80);
-  const [indentType, setIndentType] = useState(IndentStyle.Tab);
+  const [lineWidth, setLineWidth] = useState(
+    parseInt(searchParams.get("lineWidth") ?? "80")
+  );
+  const [indentStyle, setIndentStyle] = useState(
+    (searchParams.get("indentStyle") as IndentStyle) ?? IndentStyle.Tab
+  );
+  const [indentWidth, setIndentWidth] = useState(
+    parseInt(searchParams.get("indentWidth") ?? "2")
+  );
+
+  useEffect(() => {
+    const url = `${window.location.protocol}//${window.location.host}${
+      window.location.pathname
+    }?lineWidth=${lineWidth}&indentStyle=${indentStyle}&indentWidth=${indentWidth}#${btoa(
+      code
+    )}`;
+    window.history.pushState({ path: url }, "", url);
+  }, [lineWidth, indentStyle, indentWidth, code]);
 
   switch (loadingState) {
     case LoadingState.Error:
@@ -64,7 +82,8 @@ function App() {
       const { cst, ast, formatted_code, errors } = run(
         code,
         lineWidth,
-        indentType === IndentStyle.Tab
+        indentStyle === IndentStyle.Tab,
+        indentWidth
       );
       return (
         <div className="divide-y divide-slate-300">
@@ -72,8 +91,10 @@ function App() {
           <div>
             <LineWidthInput lineWidth={lineWidth} setLineWidth={setLineWidth} />
             <IndentStyleSelect
-              indentType={indentType}
-              setIndentType={setIndentType}
+              indentWidth={indentWidth}
+              setIndentWidth={setIndentWidth}
+              indentStyle={indentStyle}
+              setIndentStyle={setIndentStyle}
             />
           </div>
           <div className="box-border flex h-screen divide-x divide-slate-300">
@@ -84,7 +105,6 @@ function App() {
                 placeholder="Enter JS here"
                 onChange={(evn) => {
                   setCode(evn.target.value);
-                  window.location.hash = btoa(evn.target.value);
                 }}
                 style={{
                   fontSize: 12,
@@ -123,7 +143,11 @@ function App() {
                   />
                   <h1>Prettier</h1>
                   <CodeEditor
-                    value={formatWithPrettier(code, { lineWidth, indentType })}
+                    value={formatWithPrettier(code, {
+                      lineWidth,
+                      indentStyle,
+                      indentWidth,
+                    })}
                     language="js"
                     placeholder="Prettier Output"
                     style={{
