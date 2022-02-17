@@ -79,7 +79,7 @@ function App() {
         </div>
       );
     default:
-      const { cst, ast, formatted_code, errors } = run(
+      const { cst, ast, formatted_code, formatter_ir, errors } = run(
         code,
         lineWidth,
         indentStyle === IndentStyle.Tab,
@@ -120,6 +120,7 @@ function App() {
                   <Tab selectedClassName="bg-slate-300">Formatter</Tab>
                   <Tab selectedClassName="bg-slate-300">CST</Tab>
                   <Tab selectedClassName="bg-slate-300">AST</Tab>
+                  <Tab selectedClassName="bg-slate-300">Formatter IR</Tab>
                   <Tab
                     disabled={errors === ""}
                     selectedClassName="bg-slate-300"
@@ -164,6 +165,11 @@ function App() {
                 </TabPanel>
                 <TabPanel>
                   <pre className="h-screen overflow-y-scroll">{ast}</pre>
+                </TabPanel>
+                <TabPanel>
+                  <pre className="h-screen overflow-y-scroll">
+                    {formatter_ir}
+                  </pre>
                 </TabPanel>
                 <TabPanel>
                   <pre className="h-screen overflow-y-scroll whitespace-pre-wrap text-red-500 text-xs">

@@ -28,6 +28,10 @@ export class PlaygroundResult {
 * @returns {string}
 */
   readonly formatted_code: string;
+/**
+* @returns {string}
+*/
+  readonly formatter_ir: string;
 }
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -38,6 +42,7 @@ export interface InitOutput {
   readonly playgroundresult_ast: (a: number, b: number) => void;
   readonly playgroundresult_cst: (a: number, b: number) => void;
   readonly playgroundresult_formatted_code: (a: number, b: number) => void;
+  readonly playgroundresult_formatter_ir: (a: number, b: number) => void;
   readonly playgroundresult_errors: (a: number, b: number) => void;
   readonly run: (a: number, b: number, c: number, d: number, e: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;

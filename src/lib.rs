@@ -1,7 +1,9 @@
-use rome_formatter::{format as format_code, FormatOptions, IndentStyle};
+use rome_formatter::{
+    format as format_code, to_format_element, FormatOptions, Formatter, IndentStyle,
+};
 use rslint_errors::file::SimpleFiles;
 use rslint_errors::termcolor::{ColorSpec, WriteColor};
-use rslint_errors::{Formatter, LongFormatter};
+use rslint_errors::{Formatter as ErrorFormatter, LongFormatter};
 use rslint_parser::parse_module;
 use std::io;
 use wasm_bindgen::prelude::*;
@@ -11,6 +13,7 @@ pub struct PlaygroundResult {
     ast: String,
     cst: String,
     formatted_code: String,
+    formatter_ir: String,
     errors: String,
 }
 
@@ -29,6 +32,11 @@ impl PlaygroundResult {
     #[wasm_bindgen(getter)]
     pub fn formatted_code(&self) -> String {
         self.formatted_code.clone()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn formatter_ir(&self) -> String {
+        self.formatter_ir.clone()
     }
 
     #[wasm_bindgen(getter)]
@@ -89,6 +97,9 @@ pub fn run(code: String, line_width: u16, is_tab: bool, indent_width: u8) -> Pla
         .unwrap()
         .into_code();
 
+    let root_element = to_format_element(options, &syntax).unwrap();
+    let formatter_ir = format!("{:#?}", root_element);
+
     let mut errors = ErrorOutput(Vec::new());
     let mut error_formatter = LongFormatter;
     error_formatter.emit_with_writer(parse.errors(), &simple_files, &mut errors);
@@ -97,6 +108,7 @@ pub fn run(code: String, line_width: u16, is_tab: bool, indent_width: u8) -> Pla
         cst,
         ast,
         formatted_code,
+        formatter_ir,
         errors: String::from_utf8(errors.0).unwrap(),
     }
 }
