@@ -1,10 +1,8 @@
-use rome_formatter::{
-    format as format_code, to_format_element, FormatOptions, Formatter, IndentStyle,
-};
+use rome_formatter::{format as format_code, to_format_element, FormatOptions, IndentStyle};
 use rslint_errors::file::SimpleFiles;
 use rslint_errors::termcolor::{ColorSpec, WriteColor};
 use rslint_errors::{Formatter as ErrorFormatter, LongFormatter};
-use rslint_parser::parse_module;
+use rslint_parser::{parse, SourceType};
 use std::io;
 use wasm_bindgen::prelude::*;
 
@@ -72,11 +70,25 @@ impl WriteColor for ErrorOutput {
 }
 
 #[wasm_bindgen]
-pub fn run(code: String, line_width: u16, is_tab: bool, indent_width: u8) -> PlaygroundResult {
+pub fn run(
+    code: String,
+    line_width: u16,
+    is_tab: bool,
+    indent_width: u8,
+    is_typescript: bool,
+    is_jsx: bool,
+) -> PlaygroundResult {
     let mut simple_files = SimpleFiles::new();
     let main_file_id = simple_files.add("main.js".to_string(), code.clone());
 
-    let parse = parse_module(&code, main_file_id);
+    let source_type = match (is_typescript, is_jsx) {
+        (true, true) => SourceType::tsx(),
+        (true, false) => SourceType::ts(),
+        (false, true) => SourceType::jsx(),
+        (false, false) => SourceType::js_module(),
+    };
+
+    let parse = parse(&code, main_file_id, source_type);
     let syntax = parse.syntax();
 
     let indent_style = if is_tab {

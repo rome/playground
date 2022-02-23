@@ -10,6 +10,7 @@ import parserBabel from "prettier/esm/parser-babel";
 import IndentStyleSelect from "./IndentStyleSelect";
 import LineWidthInput from "./LineWidthInput";
 import { IndentStyle } from "./types";
+import SourceTypeSelect from "./SourceTypeSelect";
 
 enum LoadingState {
   Loading,
@@ -59,15 +60,19 @@ function App() {
   const [indentWidth, setIndentWidth] = useState(
     parseInt(searchParams.get("indentWidth") ?? "2")
   );
+  const [isTypeScript, setIsTypeScript] = useState(
+    searchParams.get("jsx") === "true"
+  );
+  const [isJsx, setIsJsx] = useState(searchParams.get("jsx") === "true");
 
   useEffect(() => {
     const url = `${window.location.protocol}//${window.location.host}${
       window.location.pathname
-    }?lineWidth=${lineWidth}&indentStyle=${indentStyle}&indentWidth=${indentWidth}#${btoa(
+    }?lineWidth=${lineWidth}&indentStyle=${indentStyle}&indentWidth=${indentWidth}&typescript=${isTypeScript}&jsx=${isJsx}#${btoa(
       code
     )}`;
     window.history.pushState({ path: url }, "", url);
-  }, [lineWidth, indentStyle, indentWidth, code]);
+  }, [lineWidth, indentStyle, indentWidth, code, isTypeScript, isJsx]);
 
   switch (loadingState) {
     case LoadingState.Error:
@@ -83,7 +88,9 @@ function App() {
         code,
         lineWidth,
         indentStyle === IndentStyle.Tab,
-        indentWidth
+        indentWidth,
+        isTypeScript,
+        isJsx
       );
       return (
         <div className="divide-y divide-slate-300">
@@ -95,6 +102,12 @@ function App() {
               setIndentWidth={setIndentWidth}
               indentStyle={indentStyle}
               setIndentStyle={setIndentStyle}
+            />
+            <SourceTypeSelect
+              isTypeScript={isTypeScript}
+              setIsTypeScript={setIsTypeScript}
+              isJsx={isJsx}
+              setIsJsx={setIsJsx}
             />
           </div>
           <div className="box-border flex h-screen divide-x divide-slate-300">

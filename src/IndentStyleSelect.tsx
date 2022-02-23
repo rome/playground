@@ -14,7 +14,7 @@ export default function IndentStyleSelect({
   setIndentWidth,
 }: Props) {
   return (
-    <div className="pl-5 pb-5 flex">
+    <div className="pl-5 flex">
       <div>
         <label className="block text-sm font-medium text-gray-700">
           Indent Type

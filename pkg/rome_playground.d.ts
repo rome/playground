@@ -5,9 +5,11 @@
 * @param {number} line_width
 * @param {boolean} is_tab
 * @param {number} indent_width
+* @param {boolean} is_typescript
+* @param {boolean} is_jsx
 * @returns {PlaygroundResult}
 */
-export function run(code: string, line_width: number, is_tab: boolean, indent_width: number): PlaygroundResult;
+export function run(code: string, line_width: number, is_tab: boolean, indent_width: number, is_typescript: boolean, is_jsx: boolean): PlaygroundResult;
 /**
 */
 export class PlaygroundResult {
@@ -44,7 +46,7 @@ export interface InitOutput {
   readonly playgroundresult_formatted_code: (a: number, b: number) => void;
   readonly playgroundresult_formatter_ir: (a: number, b: number) => void;
   readonly playgroundresult_errors: (a: number, b: number) => void;
-  readonly run: (a: number, b: number, c: number, d: number, e: number) => number;
+  readonly run: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
