@@ -1,9 +1,16 @@
+interface Props {
+  setIsTypeScript: (b: boolean) => void;
+  isTypeScript: boolean;
+  setIsJsx: (b: boolean) => void;
+  isJsx: boolean;
+}
+
 export default function SourceTypeSelect({
   setIsTypeScript,
   isTypeScript,
   setIsJsx,
   isJsx,
-}) {
+}: Props) {
   return (
     <div className="pl-6 pb-5">
       <fieldset className="space-y-5">
