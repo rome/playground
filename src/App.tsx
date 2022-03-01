@@ -61,7 +61,7 @@ function App() {
     parseInt(searchParams.get("indentWidth") ?? "2")
   );
   const [isTypeScript, setIsTypeScript] = useState(
-    searchParams.get("jsx") === "true"
+    searchParams.get("typescript") === "true"
   );
   const [isJsx, setIsJsx] = useState(searchParams.get("jsx") === "true");
 
