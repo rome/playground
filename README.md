@@ -1,4 +1,4 @@
-# DEPRECATED: Playground is now in [tools](https://github.com/rome/tools) repo
+# DEFUNCT: Playground is now in [tools](https://github.com/rome/tools) repo
 # Playground
 
 A simple playground for Rome. Right now we use Vite, which is a 
